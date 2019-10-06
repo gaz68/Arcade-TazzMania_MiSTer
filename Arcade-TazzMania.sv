@@ -150,8 +150,8 @@ wire  [7:0] ioctl_dout;
 
 wire [10:0] ps2_key;
 
-wire [15:0] joystick_0, joystick_1;
-wire [15:0] joy = joystick_0 | joystick_1;
+wire [15:0] joy_0, joy_1;
+//wire [15:0] joy = joystick_0 | joystick_1;
 
 hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 (
@@ -169,8 +169,8 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 	.ioctl_addr(ioctl_addr),
 	.ioctl_dout(ioctl_dout),
 
-	.joystick_0(joystick_0),
-	.joystick_1(joystick_1),
+	.joystick_0(joy_0),
+	.joystick_1(joy_1),
 	.ps2_key(ps2_key)
 );
 
@@ -236,10 +236,10 @@ joy8way joy1
 (
 	clk_sys,
 	{
-		status[2] ? btn_left  | joy[1] : btn_up    | joy[3],
-		status[2] ? btn_right | joy[0] : btn_down  | joy[2],
-		status[2] ? btn_down  | joy[2] : btn_left  | joy[1],
-		status[2] ? btn_up    | joy[3] : btn_right | joy[0]
+		status[2] ? btn_left  | joy_0[1] : btn_up    | joy_0[3],
+		status[2] ? btn_right | joy_0[0] : btn_down  | joy_0[2],
+		status[2] ? btn_down  | joy_0[2] : btn_left  | joy_0[1],
+		status[2] ? btn_up    | joy_0[3] : btn_right | joy_0[0]
 	},
 	{m_up,m_down,m_left,m_right}
 );
@@ -249,23 +249,23 @@ joy8way joy2
 (
 	clk_sys,
 	{
-		status[2] ? btn_left_2  | joy[1] : btn_up_2    | joy[3],
-		status[2] ? btn_right_2 | joy[0] : btn_down_2  | joy[2],
-		status[2] ? btn_down_2  | joy[2] : btn_left_2  | joy[1],
-		status[2] ? btn_up_2    | joy[3] : btn_right_2 | joy[0]
+		status[2] ? btn_left_2  | joy_1[1] : btn_up_2    | joy_1[3],
+		status[2] ? btn_right_2 | joy_1[0] : btn_down_2  | joy_1[2],
+		status[2] ? btn_down_2  | joy_1[2] : btn_left_2  | joy_1[1],
+		status[2] ? btn_up_2    | joy_1[3] : btn_right_2 | joy_1[0]
 	},
 	{m_up_2,m_down_2,m_left_2,m_right_2}
 );
 
 
-wire m_fire1  = btn_fire1 | joy[4];
-wire m_fire2  = btn_fire2 | joy[5];
+wire m_fire1  = btn_fire1 | joy_0[4];
+wire m_fire2  = btn_fire2 | joy_0[5];
 
-wire m_fire1_2  = btn_fire1_2|joy[4];
-wire m_fire2_2  = btn_fire2_2|joy[5];
+wire m_fire1_2  = btn_fire1_2|joy_1[4];
+wire m_fire2_2  = btn_fire2_2|joy_1[5];
 
-wire m_start1 = btn_one_player  | joy[6];
-wire m_start2 = btn_two_players | joy[7];
+wire m_start1 = btn_one_player  | joy_0[6] | joy_1[6];
+wire m_start2 = btn_two_players | joy_0[7] | joy_1[7];
 wire m_coin   = m_start1 | m_start2;
 
 
@@ -340,8 +340,8 @@ tazzmania_top tazzmania
 
 endmodule
 
-// Handle case where Up and Down are pressed simultaneously.
-// Same for Left and Right.
+// Handle the case where Up and Down are pressed simultaneously
+// and the same for Left and Right i.e. when using a keyboard.
 module joy8way
 (
 	input        clk,
@@ -366,8 +366,8 @@ always @(posedge clk) begin
 	if(innew[2]) last_v <= 2'b01; // D
 	if(innew[3]) last_v <= 2'b10; // U
 	
-	out[1:0] = in1[1:0] == 2'b11 ? last_h : in1[1:0]; 
-	out[3:2] = in1[3:2] == 2'b11 ? last_v : in1[3:2]; 
+	out[1:0] <= in1[1:0] == 2'b11 ? last_h : in1[1:0]; 
+	out[3:2] <= in1[3:2] == 2'b11 ? last_v : in1[3:2]; 
 end
 
 endmodule

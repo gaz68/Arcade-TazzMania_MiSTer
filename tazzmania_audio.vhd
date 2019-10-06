@@ -422,12 +422,14 @@ begin
   i8255_1E_pa(1) <= I_1P_CTRL(4); -- shoot1
   i8255_1E_pa(0) <= I_1P_CTRL(5); -- shoot2
 
-  i8255_1E_pb(7) <= I_2P_CTRL(4); -- 2P shoot1
-  i8255_1E_pb(6) <= I_2P_CTRL(5); -- 2P shoot2
-  i8255_1E_pb(5) <= I_2P_CTRL(3); -- 2P left
-  i8255_1E_pb(4) <= I_2P_CTRL(2); -- 2P right
-  i8255_1E_pb(3) <= I_2P_CTRL(0); -- 2P down
-  i8255_1E_pb(2) <= I_2P_CTRL(1); -- 2P up
+  -- Disable Joystick 2 in Cabinet mode.
+  -- Joystick 2 is used for testing in Cabinet mode (level skip). 
+  i8255_1E_pb(7) <= I_2P_CTRL(4) when I_DIP(5) = '0' else '1'; -- 2P shoot1
+  i8255_1E_pb(6) <= I_2P_CTRL(5) when I_DIP(5) = '0' else '1'; -- 2P shoot2
+  i8255_1E_pb(5) <= I_2P_CTRL(3) when I_DIP(5) = '0' else '1'; -- 2P left
+  i8255_1E_pb(4) <= I_2P_CTRL(2) when I_DIP(5) = '0' else '1'; -- 2P right
+  i8255_1E_pb(3) <= I_2P_CTRL(0) when I_DIP(5) = '0' else '1'; -- 2P down
+  i8255_1E_pb(2) <= I_2P_CTRL(1) when I_DIP(5) = '0' else '1'; -- 2P up
   i8255_1E_pb(1) <= I_DIP(2);
   i8255_1E_pb(0) <= I_DIP(1);
 
