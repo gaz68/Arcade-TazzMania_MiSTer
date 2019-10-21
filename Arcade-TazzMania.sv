@@ -284,7 +284,7 @@ always @(posedge clk_sys) begin
         ce_pix <= old_clk & ~ce_6p;
 end
 
-arcade_rotate_fx #(264,224,12,0) arcade_video
+arcade_rotate_fx #(266,224,12,0) arcade_video
 (
         .*,
 
